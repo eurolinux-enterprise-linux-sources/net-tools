@@ -1,7 +1,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 1.60
-Release: 102%{?dist}
+Release: 105%{?dist}
 License: GPL+
 Group: System Environment/Base
 URL: http://net-tools.berlios.de/
@@ -126,6 +126,13 @@ Patch85: net-tools-1.60-large-indexes.patch
 # netstat -s (statistics.c) now uses unsigned long long (instead of int) to handle 64 bit integers (Bug #580054)
 Patch86: net-tools-1.60-statistics-doubleword.patch
 
+# fix memory leak in netstat when run with -c option (Bug #634539)
+Patch88: net-tools-1.60-netstat-leak.patch
+
+# Don't rely on eth0 being default network device name.
+# Since RHEL-6.1 network devices can have arbitrary names (#682368)
+Patch89: net-tools-1.60-arbitrary-device-names.patch
+
 BuildRequires: gettext, libselinux
 BuildRequires: libselinux-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -216,6 +223,8 @@ Most of them are obsolete. For replacement check iproute package.
 %patch84 -p1 -b .IA64
 %patch85 -p1 -b .large-indexes
 %patch86 -p1 -b .doubleword
+%patch88 -p1 -b .netstat-leak
+%patch89 -p1 -b .arbitrary-device-names
 
 cp %SOURCE1 ./config.h
 cp %SOURCE2 ./config.make
@@ -304,6 +313,19 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/ethers
 
 %changelog
+* Tue Mar 15 2011  Jiri Popelka <jpopelka@redhat.com> - 1.60-105
+- Fix mii-tool/mii-diag/ether-wake to not default to eth0 because
+  since RHEL-6.1 network devices can have arbitrary names (#682368)
+
+* Tue Jan 25 2011  Jiri Popelka <jpopelka@redhat.com> - 1.60-104
+- revert HFI support commit (#633506)
+
+* Tue Nov 23 2010  Jiri Popelka <jpopelka@redhat.com> - 1.60-103
+- improved statistics-doubleword.patch (Bug #580054)
+- improved netstat(8) man page (#614931)
+- HFI support (#633506)
+- fixed memory leak in netstat when run with -c option (#634539)
+
 * Wed Apr  7 2010  Jiri Popelka <jpopelka@redhat.com> - 1.60-102
 - fixed statistics.c to use unsigned long long (instead of int) to handle 64 bit integers (Bug #580054)
 - fixed typo in statistics.c
