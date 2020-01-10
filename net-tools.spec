@@ -1,7 +1,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 1.60
-Release: 110%{?dist}
+Release: 114%{?dist}
 License: GPL+
 Group: System Environment/Base
 URL: http://net-tools.berlios.de/
@@ -144,6 +144,22 @@ Patch91: net-tools-1.60-allnames.patch
 # (#725348)
 Patch92: net-tools-1.60-netstat-p-basename.patch
 
+# Commit: 	https://sourceforge.net/p/net-tools/code/ci/e5f1be133570075e10dec3cbd3e379d2d1cb6f99/
+# BZ:		https://bugzilla.redhat.com/show_bug.cgi?id=1177980
+# Fixed in:	1.60
+Patch93: net-tools-1.60-ifconfig-EiB.patch
+
+# BZ:		https://bugzilla.redhat.com/show_bug.cgi?id=803880
+#Fixed in:	1.60
+Patch94: net-tools-inet-rresolve.patch
+
+# BZ:		https://bugzilla.redhat.com/show_bug.cgi?id=979318
+#Fixed in:	1.60
+Patch95: net-tools-1.60-netstat-inet6-manpage.patch
+
+#BZ:		https://bugzilla.redhat.com/show_bug.cgi?id=1159286
+Patch96:	net-tools-1.60-hostname-aaaa.patch
+
 BuildRequires: gettext, libselinux
 BuildRequires: libselinux-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -239,6 +255,10 @@ Most of them are obsolete. For replacement check iproute package.
 %patch90 -p1 -b .plipconfig
 %patch91 -p1 -b .allnames
 %patch92 -p1 -b .p-basename
+%patch93 -p1 -b .ifconfig-EiB
+%patch94 -p1 -b .inet-rresolve
+%patch95 -p1 -b .netstat-inet6-manpage
+%patch96 -p1 -b .net-tools-1.60-hostname-aaaa
 
 cp %SOURCE1 ./config.h
 cp %SOURCE2 ./config.make
@@ -327,6 +347,18 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/ethers
 
 %changelog
+* Mon Nov 07 2016 Michal Ruprich <mruprich@redhat.com> - 1.60-114
+- Resolves: #1159286 - "hostname --fqdn" doesn't work on RHEL6 IPV6-only
+
+* Tue Oct 18 2016 Michal Ruprich <mruprich@redhat.com> - 1.60-113
+- Resolves: #1011204 - IPv6 is not described in man of netstat command "-A" option
+
+* Mon Sep 12 2016 mruprich <mruprich@redhat.com> - 1.60-112
+- Resolves: #803880 -  INET_rresolve() fails on 64bit, big-endian hosts
+
+* Wed Sep 07 2016 Michal Ruprich <mruprich@redhat.com> - 1.60-111
+- Resolves: #1177980 - ifconfig inaccurately rounds exabytes
+
 * Wed Apr 25 2012 Jiri Popelka <jpopelka@redhat.com> - 1.60-110
 - 'hostname -I' should not depend on name resolution (#786546)
 
