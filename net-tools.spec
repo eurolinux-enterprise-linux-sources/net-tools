@@ -1,7 +1,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 1.60
-Release: 109%{?dist}
+Release: 110%{?dist}
 License: GPL+
 Group: System Environment/Base
 URL: http://net-tools.berlios.de/
@@ -327,6 +327,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/ethers
 
 %changelog
+* Wed Apr 25 2012 Jiri Popelka <jpopelka@redhat.com> - 1.60-110
+- 'hostname -I' should not depend on name resolution (#786546)
+
 * Thu Aug 25 2011 Jiri Popelka <jpopelka@redhat.com> - 1.60-109
 - Improved netstat_stop_trim.patch to not truncate IPV6 UDP sockets (#732984)
 

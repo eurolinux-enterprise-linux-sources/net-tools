@@ -1,6 +1,6 @@
 diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
---- net-tools-1.60/hostname.c.allnames	2011-05-16 17:03:32.398680260 +0100
-+++ net-tools-1.60/hostname.c	2011-05-16 17:22:27.012069071 +0100
+--- net-tools-1.60/hostname.c.allnames	2012-02-01 18:07:10.566046487 +0100
++++ net-tools-1.60/hostname.c	2012-02-01 18:09:44.302053753 +0100
 @@ -39,6 +39,8 @@
  #include <sys/param.h>
  #include <netinet/in.h>
@@ -10,9 +10,20 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
  #include "config.h"
  #include "version.h"
  #include "../intl.h"
-@@ -154,6 +156,60 @@ static void showhname(char *hname, int c
- 	return;
+@@ -130,6 +132,7 @@ static void showhname(char *hname, int c
+     register char *p, **alias;
+     struct in_addr **ip;
  
++  if (c != 'I' && c != 'A') { // 'I' and 'A' don't depend on name resolution
+     if (opt_v)
+ 	fprintf(stderr, _("Resolving `%s' ...\n"), hname);
+     if (!(hp = gethostbyname(hname))) {
+@@ -152,8 +155,62 @@ static void showhname(char *hname, int c
+     }
+     if (!(p = strchr(hp->h_name, '.')) && (c == 'd'))
+ 	return;
+-
++  }
      switch (c) {
 +    case 'I':
 +    case 'A': {
@@ -71,7 +82,7 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
      case 'a':
  	while (hp->h_aliases[0]) {
  	    printf("%s", *hp->h_aliases++);
-@@ -231,14 +287,16 @@ static void usage(void)
+@@ -231,14 +288,16 @@ static void usage(void)
      fprintf(stderr, _("       nodename [-v] {nodename|-F file}      set DECnet node name (from file)\n"));
      fprintf(stderr, _("       hostname [-n] 			    DECnet domain name\n"));
  #endif
@@ -89,7 +100,7 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
      fprintf(stderr, _("    -d, --domain          DNS domain name\n"));
      fprintf(stderr, _("    -y, --yp, --nis       NIS/YP domainname\n"));
  #if HAVE_AFDECnet
-@@ -272,12 +330,14 @@ int main(int argc, char **argv)
+@@ -272,12 +331,14 @@ int main(int argc, char **argv)
  	{"domain", no_argument, 0, 'd'},
  	{"file", required_argument, 0, 'F'},
  	{"fqdn", no_argument, 0, 'f'},
@@ -104,7 +115,7 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
  	{"ip-address", no_argument, 0, 'i'},
  	{"nis", no_argument, 0, 'y'},
  	{"yp", no_argument, 0, 'y'},
-@@ -304,7 +364,7 @@ int main(int argc, char **argv)
+@@ -304,7 +365,7 @@ int main(int argc, char **argv)
          what = 4;
  #endif /* HAVE_AFDECnet */
  
@@ -113,7 +124,7 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
  	switch (c) {
  	case 'd':
  	    what = 2;
-@@ -312,6 +372,8 @@ int main(int argc, char **argv)
+@@ -312,6 +373,8 @@ int main(int argc, char **argv)
  	case 'a':
  	case 'f':
  	case 'i':
@@ -123,8 +134,8 @@ diff -up net-tools-1.60/hostname.c.allnames net-tools-1.60/hostname.c
  	    what = 1;
  	    type = c;
 diff -up net-tools-1.60/man/en_US/hostname.1.allnames net-tools-1.60/man/en_US/hostname.1
---- net-tools-1.60/man/en_US/hostname.1.allnames	2011-05-16 17:03:31.972679613 +0100
-+++ net-tools-1.60/man/en_US/hostname.1	2011-05-16 17:33:18.071484815 +0100
+--- net-tools-1.60/man/en_US/hostname.1.allnames	2012-02-01 18:07:10.266049396 +0100
++++ net-tools-1.60/man/en_US/hostname.1	2012-02-01 18:07:10.672046657 +0100
 @@ -20,8 +20,12 @@ ypdomainname \- show or set the system's
  .RB [ \-\-domain ]
  .RB [ \-f ]
