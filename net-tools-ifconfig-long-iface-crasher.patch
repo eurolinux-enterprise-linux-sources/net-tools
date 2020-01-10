@@ -1,0 +1,36 @@
+diff -up net-tools-2.0/lib/interface.c.long_iface net-tools-2.0/lib/interface.c
+--- net-tools-2.0/lib/interface.c.long_iface	2012-10-04 11:35:27.983694933 +0200
++++ net-tools-2.0/lib/interface.c	2012-10-04 11:35:27.991694805 +0200
+@@ -216,6 +216,7 @@ out:
+ 
+ char *get_name(char **namep, char *p)
+ {
++    int count = 0;
+     while (isspace(*p))
+ 	p++;
+     char *name = *namep = p;
+@@ -224,7 +225,13 @@ char *get_name(char **namep, char *p)
+ 	    break;
+ 	if (*p == ':') {	/* could be an alias */
+ 		char *dot = p++;
+- 		while (*p && isdigit(*p)) p++;
++		count++;
++		while (*p && isdigit(*p)) {
++		    p++;
++		    count++;
++		    if (count == (IFNAMSIZ-1))
++			break;
++		}
+ 		if (*p == ':') {
+ 			/* Yes it is, backup and copy it. */
+ 			p = dot;
+@@ -240,6 +247,9 @@ char *get_name(char **namep, char *p)
+ 	    break;
+ 	}
+ 	*name++ = *p++;
++	count++;
++	if (count == (IFNAMSIZ-1))
++    	      break;
+     }
+     *name++ = '\0';
+     return p;
