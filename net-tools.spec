@@ -1,7 +1,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 1.60
-Release: 105%{?dist}
+Release: 109%{?dist}
 License: GPL+
 Group: System Environment/Base
 URL: http://net-tools.berlios.de/
@@ -133,6 +133,17 @@ Patch88: net-tools-1.60-netstat-leak.patch
 # Since RHEL-6.1 network devices can have arbitrary names (#682368)
 Patch89: net-tools-1.60-arbitrary-device-names.patch
 
+# plipconfig man page and usage output fixes (#694766)
+Patch90: net-tools-1.60-plipconfig.patch
+
+# Add -A,--all-fqdns and -I,--all-ip-addresses options to hostname (#705110)
+Patch91: net-tools-1.60-allnames.patch
+
+# patch netstat to separate basename of -p only if it is absolute
+# path (in order to make argv[0]="sshd pty/0" display as sshd, and not as /0).
+# (#725348)
+Patch92: net-tools-1.60-netstat-p-basename.patch
+
 BuildRequires: gettext, libselinux
 BuildRequires: libselinux-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -153,10 +164,10 @@ Most of them are obsolete. For replacement check iproute package.
 %patch7 -p1 -b .ipx
 %patch8 -p1 -b .inet6-lookup
 %patch9 -p1 -b .man
-%patch10 -p1 -b .gcc33
+%patch10 -p1 -b .gcc33 %{?_rawbuild}
 %patch11 -p1 -b .trailingblank
 %patch12 -p1 -b .interface
-%patch14 -p1 -b .gcc34
+%patch14 -p1 -b .gcc34 %{?_rawbuild}
 %patch15 -p1 -b .overflow
 %patch19 -p1 -b .siunits
 %patch20 -p1 -b .trunc
@@ -192,7 +203,7 @@ Most of them are obsolete. For replacement check iproute package.
 %patch52 -p1 -b .sctp
 %patch53 -p1
 %patch54 -p1 -b .long_iface
-%patch55 -p1 -b .netdevice
+%patch55 -p1 -b .netdevice %{?_rawbuild}
 %patch56 -p1 -b .skip
 %patch57 -p1
 %patch58 -p1 -b .strncpy
@@ -200,7 +211,7 @@ Most of them are obsolete. For replacement check iproute package.
 %patch60 -p1 -b .quiet
 %patch61 -p1
 %patch62 -p1 -b .iface-crash
-%patch64 -p1
+%patch64 -p1 %{?_rawbuild}
 %patch65 -p1 -b .buffer
 %patch66 -p1 -b .sctp-addrs
 %patch67 -p1 -b .i-option
@@ -225,6 +236,9 @@ Most of them are obsolete. For replacement check iproute package.
 %patch86 -p1 -b .doubleword
 %patch88 -p1 -b .netstat-leak
 %patch89 -p1 -b .arbitrary-device-names
+%patch90 -p1 -b .plipconfig
+%patch91 -p1 -b .allnames
+%patch92 -p1 -b .p-basename
 
 cp %SOURCE1 ./config.h
 cp %SOURCE2 ./config.make
@@ -313,6 +327,24 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/ethers
 
 %changelog
+* Thu Aug 25 2011 Jiri Popelka <jpopelka@redhat.com> - 1.60-109
+- Improved netstat_stop_trim.patch to not truncate IPV6 UDP sockets (#732984)
+
+* Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> - 1.60-108
+- patch netstat to separate basename of -p only if it is absolute
+  path (in order to make argv[0]="sshd pty/0" display as sshd, and not as /0).
+  (#725348)
+
+* Thu Jul 21 2011  Jiri Popelka <jpopelka@redhat.com> - 1.60-107
+- Fix again the description of the "mss M" option in route(8) (#680837)
+
+* Wed Jun 15 2011  Jiri Popelka <jpopelka@redhat.com> - 1.60-106
+- Improve route(8) man page saying that 'route mss' actually sets MTU (#680837)
+- plipconfig man page and usage output fixes (#694766)
+- Add -A,--all-fqdns and -I,--all-ip-addresses options to hostname (#705110)
+- Use ?_rawbuild macro required for Coverity to scan defects
+  in downstream patches separately (#708538)
+
 * Tue Mar 15 2011  Jiri Popelka <jpopelka@redhat.com> - 1.60-105
 - Fix mii-tool/mii-diag/ether-wake to not default to eth0 because
   since RHEL-6.1 network devices can have arbitrary names (#682368)
