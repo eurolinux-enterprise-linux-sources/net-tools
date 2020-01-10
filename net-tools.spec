@@ -3,7 +3,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 2.0
-Release: 0.13.%{checkout}%{?dist}
+Release: 0.17.%{checkout}%{?dist}
 License: GPLv2+
 Group: System Environment/Base
 URL: http://sourceforge.net/projects/net-tools/
@@ -53,6 +53,9 @@ Patch10: net-tools-netstat-probe.patch
 # use all interfaces instead of default (#1003875)
 Patch20: ether-wake-interfaces.patch
 
+# make sctp quiet on systems without sctp (#1063906)
+Patch21: net-tools-sctp-quiet.patch
+
 BuildRequires: gettext, libselinux
 BuildRequires: libselinux-devel
 BuildRequires: systemd-units
@@ -86,6 +89,7 @@ cp %SOURCE7 ./man/en_US
 cp %SOURCE8 ./man/en_US
 
 %patch20 -p1 -b .interfaces
+%patch21 -p1 -b .sctp-quiet
 
 touch ./config.h
 
@@ -162,6 +166,18 @@ install -m 644 %{SOURCE9} %{buildroot}%{_unitdir}
 %attr(0644,root,root)   %{_unitdir}/arp-ethers.service
 
 %changelog
+* Fri Feb 14 2014 Jaromír Končický <jkoncick@redhat.com> - 2.0-0.17.20131004git
+- remake sctp-quiet.patch (#1063906#c7)
+
+* Tue Feb 11 2014 Jaromír Končický <jkoncick@redhat.com> - 2.0-0.20.20131119git
+- make sctp quiet on systems without sctp (#1063906)
+
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 2.0-0.15.20131004git
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2.0-0.14.20131004git
+- Mass rebuild 2013-12-27
+
 * Fri Oct 04 2013 Jiri Popelka <jpopelka@redhat.com> - 2.0-0.13.20131004git
 - latest snapshot (#1013530)
 - remove %%ifarch alpha condition from %%prep
