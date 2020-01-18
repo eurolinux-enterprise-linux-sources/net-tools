@@ -3,7 +3,7 @@
 Summary: Basic networking tools
 Name: net-tools
 Version: 2.0
-Release: 0.22.%{checkout}%{?dist}
+Release: 0.24.%{checkout}%{?dist}
 License: GPLv2+
 Group: System Environment/Base
 URL: http://sourceforge.net/projects/net-tools/
@@ -65,6 +65,9 @@ Patch23: net-tools-ifconfig-EiB.patch
 # sctp was not documented in help and manpage
 Patch24: net-tools-netstat-sctp-man.patch
 
+# output of interface names was restricted to 8-10 characters max
+Patch25: net-tools-interface-name-len.patch
+
 BuildRequires: gettext, libselinux
 BuildRequires: libselinux-devel
 BuildRequires: systemd-units
@@ -102,6 +105,7 @@ cp %SOURCE8 ./man/en_US
 %patch22 -p1 -b .exit-code
 %patch23 -p1 -b .round-EiB
 %patch24 -p1 -b .sctp-man
+%patch25 -p1 -b .interface-name-len
 
 touch ./config.h
 
@@ -178,16 +182,22 @@ install -m 644 %{SOURCE9} %{buildroot}%{_unitdir}
 %attr(0644,root,root)   %{_unitdir}/arp-ethers.service
 
 %changelog
-* Wed Mar 29 2017 Michal Ruprich - 2.0-0.22.20131004git
+* Wed Apr 25 2018 Michal Ruprich <mruprich@redhat.com> - 2.0-0.24.20131004git
+- Resolves: #1568306 - netstat -i only shows 8 characters of Iface name
+
+* Tue Apr 10 2018 Michal Ruprich <mruprich@redhat.com> - 2.0-0.23.20131004git
+- Resolves: #1538315 - netstat -agn only shows 10 character interface name for IPv4 addressing
+
+* Wed Mar 29 2017 Michal Ruprich <mruprich@redhat.com> - 2.0-0.22.20131004git
 - Resolves: #1167833 - netstat -S/--sctp not documented
 
-* Wed Mar 22 2017 Michal Ruprich - 2.0-0.21.20131004git
+* Wed Mar 22 2017 Michal Ruprich <mruprich@redhat.com> - 2.0-0.21.20131004git
 - Related: #1427889 - exit code on wrong parameter is zero for many net-tools binaries
 
-* Wed Mar 22 2017 Michal Ruprich - 2.0-0.20.20131004git
+* Wed Mar 22 2017 Michal Ruprich <mruprich@redhat.com> - 2.0-0.20.20131004git
 - Resolves: #1427889 - exit code on wrong parameter is zero for many net-tools binaries
 
-* Mon Feb 27 2017 Michal Ruprich - 2.0-0.19.20131004git
+* Mon Feb 27 2017 Michal Ruprich <mruprich@redhat.com> - 2.0-0.19.20131004git
 - Related: #1257549 - netstat tool does not throw correct exit code on wrong parameter
 
 * Wed Jan 18 2017 Michal Ruprich <mruprich@redhat.com> - 2.0-0.18.20131004git
